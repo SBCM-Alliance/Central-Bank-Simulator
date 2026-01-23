@@ -3,111 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中央銀行シミュレーター</title>
+    <title>中央銀行シミュレーター - Central Bank Simulator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #1a237e; --accent: #ffd600; --bg: #f5f7f9; --dark: #263238; --error: #d32f2f; --success: #2e7d32; --market: #0288d1; --real: #f4511e; --gov: #673ab7; }
-        body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background-color: var(--bg); color: #333; margin: 0; padding: 15px; line-height: 1.5; }
-        .container { max-width: 1250px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        @media (min-width: 992px) { .container { display: grid; grid-template-columns: 420px 1fr; gap: 25px; } }
-        .card { background: #fff; padding: 22px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 10px; }
-        h1 { color: var(--primary); font-size: 1.1rem; margin: 0 0 15px 0; border-left: 5px solid var(--primary); padding-left: 12px; font-weight: bold; }
-        .rate-display { font-size: 3.2rem; font-weight: bold; color: var(--primary); text-align: center; display: block; margin: 10px 0; }
-        input[type="range"] { width: 100%; margin: 15px 0; height: 10px; cursor: pointer; }
-        .btn-policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .btn-policy { padding: 12px 8px; border: 2px solid #ddd; background: #fff; color: #444; font-size: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: bold; text-align: center; transition: 0.2s; display: flex; flex-direction: column; justify-content: center; min-height: 70px; }
-        .btn-policy:hover { border-color: var(--gov); background: #f3e5f5; }
+        body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background-color: var(--bg); color: #333; margin: 0; padding: 10px; line-height: 1.4; }
+        .container { max-width: 1250px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+        @media (min-width: 992px) { .container { display: grid; grid-template-columns: 400px 1fr; gap: 20px; } }
+        .card { background: #fff; padding: 18px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 5px; }
+        h1 { color: var(--primary); font-size: 1rem; margin: 0 0 12px 0; border-left: 5px solid var(--primary); padding-left: 10px; font-weight: bold; }
+        .rate-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); text-align: center; display: block; margin: 5px 0; }
+        input[type="range"] { width: 100%; margin: 10px 0; height: 10px; cursor: pointer; }
+        .btn-policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 5px; }
+        .btn-policy { padding: 10px 5px; border: 1px solid #ddd; background: #fff; color: #444; font-size: 0.7rem; border-radius: 6px; cursor: pointer; font-weight: bold; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 60px; }
         .btn-policy.active { background: var(--gov); color: white; border-color: var(--gov); }
-        .btn-policy span { font-size: 0.55rem; opacity: 0.8; font-weight: normal; margin-top: 2px; line-height: 1.2; }
-        .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
-        .metric-card { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 12px; text-align: center; }
-        .val { font-size: 1.2rem; font-weight: bold; display: block; }
-        .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .wallet-stat { padding: 15px; border-radius: 10px; color: white; text-align: center; }
-        .wallet-stat small { font-size: 0.65rem; opacity: 0.9; display: block; margin-bottom: 5px; }
-        .wallet-stat .amount { font-size: 1.2rem; font-weight: bold; }
-        .bg-income { background: #43a047; }
-        .bg-outcome { background: #e53935; }
-        .wallet-msg { font-size: 0.8rem; margin-top: 10px; color: #555; font-style: italic; background: #f0f0f0; padding: 8px; border-radius: 4px; border-left: 3px solid #ccc; }
-        .reaction-item { padding: 10px; border-radius: 8px; font-size: 0.8rem; border: 1px solid #eee; margin-top: 8px; line-height: 1.4; }
-        .bg-gov { background: #f1f8e9; border-left: 5px solid #689f38; }
-        .bg-biz { background: #e3f2fd; border-left: 5px solid #1976d2; }
-        .bg-home { background: #fff3e0; border-left: 5px solid #f57c00; }
-        .footer-note { text-align: center; font-size: 0.7rem; color: #999; padding: 20px; }
+        .btn-policy span { font-size: 0.55rem; opacity: 0.8; font-weight: normal; margin-top: 2px; }
+        .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+        .metric-card { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 10px; text-align: center; }
+        .val { font-size: 1.1rem; font-weight: bold; display: block; }
+        .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .wallet-stat { padding: 10px; border-radius: 8px; color: white; text-align: center; }
+        .bg-income { background: #43a047; } .bg-outcome { background: #e53935; }
+        .reaction-item { padding: 8px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #eee; margin-top: 5px; line-height: 1.3; }
+        .bg-gov { background: #f1f8e9; border-left: 4px solid #689f38; }
+        .bg-biz { background: #e3f2fd; border-left: 4px solid #1976d2; }
+        .bg-home { background: #fff3e0; border-left: 4px solid #f57c00; }
+        .footer-note { text-align: center; font-size: 0.65rem; color: #999; padding: 15px; }
     </style>
 </head>
 <body>
 
-    <header style="text-align:center; padding: 10px 0 20px 0;">
-        <h2 style="font-size:1.6rem; color:var(--primary); margin:0; font-weight: 900;">🏦 中央銀行シミュレーター</h2>
-        <div style="font-size:0.8rem; opacity:0.6; font-family: monospace;">Policy Integrated Monitor v2.0 | <span id="clock">--:--:--</span></div>
+    <header style="text-align:center; padding: 10px 0;">
+        <h2 style="font-size:1.4rem; color:var(--primary); margin:0; font-weight: 900;">🏦 中央銀行シミュレーター</h2>
+        <div style="font-size:0.75rem; opacity:0.6; font-family: monospace;">v8.8 Fixed | <span id="clock">--:--:--</span></div>
     </header>
 
     <div class="container">
         <div class="left">
+            <!-- 外部情勢 -->
             <div class="card" style="background: var(--dark); color:white; border:none;">
-                <h1 style="color:white; border-left-color: var(--accent);">📡 世界情勢を同期</h1>
-                <button onclick="syncWorld()" style="background:var(--accent); border:none; width:100%; padding:12px; font-weight:bold; border-radius:8px; cursor:pointer; font-size:0.9rem;">最新ニュースを同期 🔄</button>
-                <div id="news-feed" style="background:#000; color:#00e676; padding:10px; font-family:monospace; font-size:0.75rem; height:80px; overflow-y:auto; margin-top:10px; border:1px solid #444;">> 待機中...</div>
+                <h1 style="color:white; border-left-color: var(--accent);">📡 世界情勢同期</h1>
+                <button onclick="syncWorld()" style="background:var(--accent); border:none; width:100%; padding:10px; font-weight:bold; border-radius:8px; cursor:pointer;">最新ニュースを同期 🔄</button>
+                <div id="news-feed" style="background:#000; color:#00e676; padding:8px; font-family:monospace; font-size:0.7rem; height:70px; overflow-y:auto; margin-top:8px; border:1px solid #444;">> 待機中...</div>
+                <div id="usa-rate-info" style="font-size:0.7rem; margin-top:5px; text-align:right; color:#aaa;">米FRB金利(想定): 4.75%</div>
             </div>
+
+            <!-- 操作レバー -->
             <div class="card">
                 <h1>🎛️ 金融・資本レバー</h1>
-                <small style="color:#666; font-weight: bold;">政策金利 [日本銀行]</small>
+                <small>政策金利 [日本銀行]</small>
                 <span class="rate-display" id="rate-display">0.75%</span>
                 <input type="range" id="rate-slider" min="-0.1" max="5.0" step="0.05" value="0.75">
-                <small style="color:#666; font-weight: bold;">内部留保の優先度 (株主還元) [企業]</small>
+                
+                <!-- スライダーの表示とタイトルを修正 -->
+                <small>家計還元 ⇔ 内部留保 の配分 [経済界]</small>
                 <input type="range" id="greed-slider" min="0" max="100" step="1" value="50">
-            </div>
-            <div class="card" style="border-top: 6px solid #43a047;">
-                <h1>👛 政府の財布（標準ブロック換算）</h1>
-                <div class="wallet-grid">
-                    <div class="wallet-stat bg-income"><small>税収 (徴収)</small><span class="amount" id="gov-income">--万</span></div>
-                    <div class="wallet-stat bg-outcome"><small>支出 (注入)</small><span class="amount" id="gov-outcome">--万</span></div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #999; margin-top:-5px; font-weight: bold;">
+                    <span style="color:var(--success)">← 家計へ還元(賃上げ)</span>
+                    <span style="color:var(--error)">内部留保(現金の凍結) →</span>
                 </div>
-                <div id="wallet-balance" style="text-align:center; font-weight:bold; margin-top:10px; font-size:0.85rem;"></div>
-                <div class="wallet-msg" id="wallet-msg">政府の赤字分、家計にお金が回っています。</div>
+            </div>
+
+            <!-- 政府の財布 -->
+            <div class="card" style="border-top: 5px solid #43a047;">
+                <h1>👛 政府の財布</h1>
+                <div class="wallet-grid">
+                    <div class="wallet-stat bg-income"><small>税収</small><span class="amount" id="gov-income">--万</span></div>
+                    <div class="wallet-stat bg-outcome"><small>支出</small><span class="amount" id="gov-outcome">--万</span></div>
+                </div>
+                <div id="wallet-balance" style="text-align:center; font-weight:bold; margin-top:8px; font-size:0.8rem;"></div>
             </div>
         </div>
+
         <div class="right">
+            <!-- グラフ -->
             <div class="card">
                 <h1>📈 経済指標 (青:市場 / 橙:生活)</h1>
-                <div style="height: 300px;"><canvas id="mainChart"></canvas></div>
+                <div style="height: 280px;"><canvas id="mainChart"></canvas></div>
             </div>
+
+            <!-- 金利差バグを修正したメトリクス -->
             <div class="metric-grid">
                 <div class="metric-card"><small>想定・円相場</small><span class="val" id="yen-val">--円</span></div>
                 <div class="metric-card"><small>日米金利差</small><span class="val" id="gap-val">--%</span></div>
-                <div class="metric-card"><small>実質賃金判定</small><span class="val" id="wage-val">--</span></div>
+                <div class="metric-card"><small>実質購買力判定</small><span class="val" id="wage-val">--</span></div>
             </div>
+
+            <!-- 各層の反応 -->
             <div class="card" style="border-top: 5px solid var(--error);">
-                <h1>👥 各界の反応と悲鳴</h1>
+                <h1>👥 社会の悲鳴と反応</h1>
                 <div class="reaction-item bg-gov" id="react-gov">🏛️ 政府: --</div>
                 <div class="reaction-item bg-biz" id="react-biz">🏭 経済界: --</div>
                 <div class="reaction-item bg-home" id="react-home">🏠 家計: --</div>
-                <div id="boj-briefing" style="font-size:0.8rem; color:#666; margin-top:10px; padding:8px; background:#fffde7; border-radius:4px;">情勢を同期してください。</div>
+                <div id="boj-briefing" style="font-size:0.75rem; color:#666; margin-top:8px; padding:8px; background:#fffde7; border-radius:4px;">情勢を同期してスタートしてください。</div>
             </div>
-            <div class="card" style="border-top: 6px solid var(--gov); background: #f3e5f5;">
-                <h1>🏛️ 政府の介入政策（実行・解除を切り替え）</h1>
+
+            <!-- 介入政策 -->
+            <div class="card" style="border-top: 5px solid var(--gov); background: #f3e5f5;">
+                <h1>🏛️ 政府の介入政策</h1>
                 <div class="btn-policy-grid">
-                    <button class="btn-policy" id="p1" onclick="togglePolicy('p1')">所得税・社保の大減税<span>家計の「アース」を劇的強化</span></button>
-                    <button class="btn-policy" id="p2" onclick="togglePolicy('p2')">消費税の完全廃止<span>【注】強烈なインフレを誘発</span></button>
-                    <button class="btn-policy" id="p3" onclick="togglePolicy('p3')">企業の賃上げ義務化<span>企業利益を家計へ強制移動</span></button>
+                    <button class="btn-policy" id="p1" onclick="togglePolicy('p1')">所得税・社保減税<span>家計の「アース」を強化</span></button>
+                    <button class="btn-policy" id="p2" onclick="togglePolicy('p2')">消費税の完全廃止<span>【注】狂烈なインフレを誘発</span></button>
+                    <button class="btn-policy" id="p3" onclick="togglePolicy('p3')">内部留保への課税<span>溜め込んだ金を家計へ解放</span></button>
                     <button class="btn-policy" id="p4" onclick="togglePolicy('p4')">一律10万円給付<span>短期的だが物価を押し上げる</span></button>
-                    <button class="btn-policy" id="p5" onclick="togglePolicy('p5')">行政・ITの徹底効率化<span>システムの「摩擦」を減らす</span></button>
-                    <button class="btn-policy" id="p6" onclick="togglePolicy('p6')">食料・エネ自給投資<span>【5年】投資による赤字と歪み増</span></button>
-                    <button class="btn-policy" id="p7" onclick="togglePolicy('p7')">公共事業のバラマキ<span>【注】大手と東京に金が漏れる</span></button>
-                    <button class="btn-policy" id="p8" onclick="togglePolicy('p8')">緊縮財政（規律重視）<span>【注】家計からエネルギーを回収</span></button>
+                    <button class="btn-policy" id="p5" onclick="togglePolicy('p5')">行政の徹底効率化<span>中抜きを排除し負担を減らす</span></button>
+                    <button class="btn-policy" id="p6" onclick="togglePolicy('p6')">食料・エネ自給投資<span>【5年】現在は投資先行期</span></button>
+                    <button class="btn-policy" id="p7" onclick="togglePolicy('p7')">公共事業のバラマキ<span>株価は上がるが中抜き大</span></button>
+                    <button class="btn-policy" id="p8" onclick="togglePolicy('p8')">緊縮財政 (規律重視)<span>【注】家計から金を吸い上げる</span></button>
                 </div>
             </div>
         </div>
     </div>
     <footer class="footer-note">
-        ※ 実際の経済責任は分散しており、単独での制御は不可能です。マイナスの手取りは「家計の破綻」を意味します。<br>
-        © 2026 SBCM Alliance
+        ※ 実際の経済責任は分散しており、単独での制御は不可能です。<br>
+        © 2026 Governance Engineering Simulator | Based on SBCM Principles.
     </footer>
 
     <script>
         let currentRate = 0.75;
-        let greedLevel = 50;
+        let greedLevel = 50; // 0=還元最大, 100=留保最大
         let usaRate = 4.75;
         let p = { p1: false, p2: false, p3: false, p4: false, p5: false, p6: false, p7: false, p8: false };
 
@@ -119,23 +133,30 @@
                 datasets: [{
                     data: [100, 100, 100, 100, 100],
                     backgroundColor: ['#0288d1', '#03a9f4', '#f4511e', '#ff7043', '#fb8c00'],
-                    borderRadius: 6
+                    borderRadius: 5
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -150, max: 200, grid: { color: '#eee' } } }, plugins: { legend: { display: false } } }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                scales: { y: { min: -150, max: 200, grid: { color: '#eee' } } }, 
+                plugins: { legend: { display: false } } 
+            }
         });
 
         function update() {
             document.getElementById('rate-display').innerText = currentRate.toFixed(2) + "%";
+            
+            // 金利差の計算と表示を同期
             const gap = usaRate - currentRate;
             document.getElementById('gap-val').innerText = gap.toFixed(2) + "%";
+            document.getElementById('usa-rate-info').innerText = `米FRB金利(想定): ${usaRate.toFixed(2)}%`;
 
-            // 1. 政府の財布
+            // 1. 政府の財布計算
             let bInc = 150; let bOut = 200;
             let inflationShield = 1.0;
             let structureDistortion = 1.0;
             let efficiency = 1.0;
-            let incomeBonus = 0;
             let inflationPush = 0;
 
             if (p.p1) bInc -= 40; 
@@ -144,29 +165,30 @@
             if (p.p4) { bOut += 70; inflationPush += 15; }
             if (p.p7) { bOut += 40; structureDistortion += 0.3; }
             if (p.p5) { efficiency = 0.75; bOut -= 10; }
+            if (p.p6) { bOut += 50; structureDistortion += 0.15; inflationShield = 0.95; inflationPush += 5; }
             
-            // P6: 自給自足投資のデバッグ（5年スパン：投資期）
-            if (p.p6) {
-                bOut += 50;              // 巨額の建設・設備投資
-                structureDistortion += 0.15; // 国家プロジェクト特有の歪み
-                inflationShield = 0.95;   // 5年では3-5%程度の微小な防御効果
-                inflationPush += 5;       // 公共投資による需要増がインフレを助長
-            }
+            // P3: 内部留保課税（これを押すとスライダーが左＝還元側に強制移動する演出）
+            if (p.p3) { bInc += 30; greedLevel = Math.max(0, greedLevel - 20); }
 
             let totalOut = bOut + (currentRate * 15);
-            let totalInc = bInc + (greedLevel > 70 ? 10 : 0);
+            let totalInc = bInc + (greedLevel > 60 ? 15 : 5);
             document.getElementById('gov-income').innerText = Math.round(totalInc) + "万";
             document.getElementById('gov-outcome').innerText = Math.round(totalOut) + "万";
+            
             let bal = totalInc - totalOut;
             document.getElementById('wallet-balance').innerText = bal < 0 ? `財政赤字: ${Math.abs(Math.round(bal))}万 (社会へ放出)` : `財政黒字: ${Math.round(bal)}万 (社会から回収)`;
             document.getElementById('wallet-balance').style.color = bal < 0 ? 'var(--real)' : 'var(--success)';
 
             // 2. 指標計算
-            incomeBonus = (totalOut - totalInc) * 0.7 + (p.p3 ? greedLevel*0.4 : 0);
-            const stock = (100 - (currentRate * 10) + (usaRate * 4) + (greedLevel * 0.3) + (p.p7 ? 20 : 0)) / structureDistortion;
+            // 内部留保スライダーのロジック：greedLevelが0(左)に近いほど家計へのボーナスが大きい
+            let incomeBonus = (totalOut - totalInc) * 0.7 + ((100 - greedLevel) * 0.4);
+            
+            const stock = (100 - (currentRate * 10) + (usaRate * 4) + (greedLevel * 0.5) + (p.p7 ? 20 : 0)) / structureDistortion;
             const yenVal = 100 - (gap * 9); 
             const inflation = (100 + (gap * 15) - (currentRate * 8) + inflationPush) * inflationShield;
             const mortgage = (100 + (currentRate * 55)) * efficiency;
+            
+            // 手取り計算
             let realInc = 100 + incomeBonus - ((inflation - 100) * 1.8) - ((mortgage - 100) * 1.0) + (currentRate * 2);
 
             mainChart.data.datasets[0].data = [stock, yenVal, inflation, mortgage, realInc];
@@ -174,18 +196,17 @@
             mainChart.update();
 
             document.getElementById('yen-val').innerText = (142 + (gap * 4.8)).toFixed(1) + "円";
-            document.getElementById('wage-val').innerText = realInc < 0 ? "🚨 破綻" : (realInc > 105 ? "✨ 向上" : "🔻 低下");
+            document.getElementById('wage-val').innerText = realInc < 0 ? "🚨 破綻" : (realInc > 105 ? "✨ 向上" : (realInc < 90 ? "🔻 深刻" : "維持"));
 
-            // 状況報告
+            // 反応ログ
             let alog = "";
-            if (p.p6) alog += "【分析】自給投資を実行中。現在はコスト先行期であり、財布と物価を圧迫していますが将来の盾を構築中です。<br>";
-            if (bal > 0) alog += "【警告】政府が黒字。民間からエネルギーを吸い上げすぎており、実体経済が窒息しています。<br>";
-            if (p.p2 && inflation > 140) alog += "【悲鳴】消費税廃止による熱暴走が止まりません。生活が焼け野原です。<br>";
-            document.getElementById('boj-briefing').innerHTML = alog || "現状は均衡していますが、外部からの円安熱を制御しきれていません。";
+            if (greedLevel > 80) alog += "【血栓】企業が利益を溜め込みすぎです。家計にお金が回っていません。<br>";
+            if (bal > 0) alog += "【警告】政府が黒字。民間からエネルギーを奪いすぎています。<br>";
+            document.getElementById('boj-briefing').innerHTML = alog || "市場と実体のバランスを監視中...";
 
-            document.getElementById('react-gov').innerHTML = `🏛️ <b>政府:</b> ${bal < -100 ? '赤字爆発で財務省がパニック' : '支持率を気にしています'}`;
-            document.getElementById('react-biz').innerHTML = `🏭 <b>経済界:</b> ${p.p3 ? '賃上げ強制に猛抗議' : '低金利の維持を要求'}`;
-            document.getElementById('react-home').innerHTML = `🏠 <b>家計:</b> ${realInc < 0 ? '一揆寸前。生存が危うい' : (realInc > 100 ? 'ようやく循環を感じる' : '物価とローンの板挟み')}`;
+            document.getElementById('react-gov').innerHTML = `🏛️ <b>政府:</b> ${bal < -100 ? '赤字過大に悲鳴' : '支持率を維持したい'}`;
+            document.getElementById('react-biz').innerHTML = `🏭 <b>経済界:</b> ${greedLevel < 30 ? '賃上げ負担に不満' : '内部留保を優先中'}`;
+            document.getElementById('react-home').innerHTML = `🏠 <b>家計:</b> ${realInc < 0 ? '手取りが赤字。生存不能' : (realInc > 100 ? 'ようやく循環を感じる' : '物価とローンの板挟み')}`;
         }
 
         function togglePolicy(id) { p[id] = !p[id]; document.getElementById(id).classList.toggle('active'); update(); }
@@ -197,13 +218,14 @@
                 const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://news.google.com/rss/search?q=日銀+金利+経済&hl=ja&gl=JP&ceid=JP:ja')}`);
                 const data = await response.json();
                 feed.innerHTML = data.items.slice(0,3).map(i => `> ${i.title}`).join('<br>');
-                usaRate = 5.25; update();
+                usaRate = 5.25; // 同期時は現在の高水準をセット
+                update();
             } catch (e) {
-                feed.innerHTML = "> [OFFLINE] 2026年予測データを適用中...<br>> 円安155円台。米FRB、利下げに慎重姿勢。";
-                usaRate = 5.00; update();
+                feed.innerHTML = "> [OFFLINE] 予測情勢を適用中<br>> 円安155円台。米FRBは慎重姿勢。";
+                usaRate = 5.00; 
+                update();
             }
         }
-
         document.getElementById('rate-slider').addEventListener('input', e => { currentRate = parseFloat(e.target.value); update(); });
         document.getElementById('greed-slider').addEventListener('input', e => { greedLevel = parseInt(e.target.value); update(); });
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
