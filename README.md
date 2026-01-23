@@ -7,6 +7,10 @@
 > **「スローガン（言葉）で選ぶな。物理法則（ロジック）で選べ。」**  
 > ―― 金利を上げても、下げても、誰かが死ぬ。この「詰み」の状態をデバッグせよ。
 
+|メイン画面|政府の介入政策|
+|---|---|
+|![](https://github.com/SBCM-Alliance/Central-Bank-Simulator/blob/main/images/CB_001.png)|![](https://github.com/SBCM-Alliance/Central-Bank-Simulator/blob/main/images/CB_002.png)|
+
 ## 📖 概要
 
 このシミュレーターは、中央銀行（日本銀行）総裁の視点から、金利操作が日本経済の「市場（数字）」と「実体（生活）」にどのような物理的衝撃を与えるかを可視化したツールです。
